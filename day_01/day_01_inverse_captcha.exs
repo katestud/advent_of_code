@@ -37,15 +37,13 @@ defmodule InverseCaptchaTwo do
   end
   defp accumulate_matches(list, index, size, steps, acc) when size > index + steps do
     { current, match } = { Enum.at(list, index),  Enum.at(list, index + steps) }
-    cond do
-      current == match ->
-        accumulate_matches(list, index + 1, size, steps, acc + current)
-      true ->
-        accumulate_matches(list, index + 1, size, steps, acc)
-    end
+    accumulate_matches(list, index, size, steps, acc, {current, match})
   end
   defp accumulate_matches(list, index, size, steps, acc) do
     { current, match } = { Enum.at(list, index),  Enum.at(list, index - steps) }
+    accumulate_matches(list, index, size, steps, acc, {current, match})
+  end
+  defp accumulate_matches(list, index, size, steps, acc, {current, match}) do
     cond do
       current == match ->
         accumulate_matches(list, index + 1, size, steps, acc + current)
