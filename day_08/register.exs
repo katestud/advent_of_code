@@ -22,9 +22,9 @@ defmodule Register do
     current_val = map[var_name] || 0
     inc = if add_or_sub == "inc", do: "+", else: "-"
     current_compared_val = map[compared_var] || 0
-    string = "if #{current_compared_val} #{comparator} #{compared_val}, do: #{current_val} #{inc} #{incrementor}, else: #{current_val}"
-    str = Code.string_to_quoted(string)
-    {{:ok, val}, _} = Code.eval_quoted(str)
+    string_code = "if #{current_compared_val} #{comparator} #{compared_val}, do: #{current_val} #{inc} #{incrementor}, else: #{current_val}"
+    quoted_instruction = Code.string_to_quoted(string_code)
+    {{:ok, val}, _} = Code.eval_quoted(quoted_instruction)
 
     new_map = Map.put(map, var_name, val)
     new_max = Enum.max([max, val])
