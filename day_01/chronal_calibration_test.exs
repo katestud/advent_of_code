@@ -7,10 +7,10 @@ defmodule FrequencyTest do
 
   test "calibrates the frequency" do
     freq = Frequency.calibrate("test_input.txt")
-    assert freq == 3
+    assert freq == 2
 
     freq = Frequency.calibrate("input.txt")
-    assert freq == 454
+    assert freq == 566
   end
 
 end

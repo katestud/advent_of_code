@@ -14,19 +14,33 @@
 # +1, +1, -2 results in  0
 # -1, -2, -3 results in -6
 
+# --- Part Two ---
+# You notice that the device repeats the same frequency change list over and over. To calibrate the device, you need to find the first frequency it reaches twice. Note that your device might need to repeat its list of frequency changes many times before a duplicate frequency is found, and that duplicates might be found while in the middle of processing the list.
+
 
 defmodule Frequency do
 
   def calibrate(file_path) do
     File.read!(file_path)
     |> String.split("\n")
-    |> adjust_frequency(0)
+    |> find_duplicate_frequencies()
   end
 
-  defp adjust_frequency([], freq), do: freq
-  defp adjust_frequency([instruction | rest], freq) do
-    freq = adjust_frequency(String.at(instruction, 0), String.slice(instruction, 1..-1), freq)
-    adjust_frequency(rest, freq)
+  defp find_duplicate_frequencies(list) do
+    find_duplicate_frequencies(list, list, 0, MapSet.new([0]))
+  end
+
+  defp find_duplicate_frequencies(initial, [], freq, found_frequencies) do
+    find_duplicate_frequencies(initial, initial, freq, found_frequencies)
+  end
+  defp find_duplicate_frequencies(initial, [instruction | rest], freq, found_frequencies) do
+    new_freq = adjust_frequency(String.at(instruction, 0), String.slice(instruction, 1..-1), freq)
+    if MapSet.member?(found_frequencies, new_freq) do
+      new_freq
+    else
+      found = MapSet.put(found_frequencies, new_freq)
+      find_duplicate_frequencies(initial, rest, new_freq, found)
+    end
   end
 
   defp adjust_frequency("+", increment, freq) do
