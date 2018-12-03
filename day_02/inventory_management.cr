@@ -31,3 +31,45 @@ input.each do |box_id|
 end
 
 puts exactly_three_count * exactly_two_count
+
+# The boxes will have IDs which differ by exactly one character at the same position in both strings. For example, given the following box IDs:
+
+# abcde
+# fghij
+# klmno
+# pqrst
+# fguij
+# axcye
+# wvxyz
+# The IDs abcde and axcye are close, but they differ by two characters (the second and fourth). However, the IDs fghij and fguij differ by exactly one character, the third (h and u). Those must be the correct boxes.
+
+input = File.read("input.txt").split("\n")
+
+input.each_with_index do |box_id, index|
+    dup_found = false
+
+    input.each_with_index do |compared_box_id, compared_index|
+        next if index == compared_index
+        current_box_chars = box_id.chars
+        compared_box_chars = compared_box_id.chars
+        difference_count = 0
+        current_box_chars.each_with_index do |char, char_index|
+            unless compared_box_chars[char_index]?
+                difference_count += 1
+                next
+            end
+            if char != compared_box_chars[char_index]
+                difference_count += 1 
+                next
+            end
+        end
+        if difference_count == 1
+            puts box_id 
+            puts compared_box_id 
+            dup_found = true
+            break
+        end
+    end
+    break if dup_found
+
+end
