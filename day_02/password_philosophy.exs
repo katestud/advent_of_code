@@ -16,26 +16,59 @@
 
 # How many passwords are valid according to their policies?
 
+# Part 2
+
+# While it appears you validated the passwords correctly, they don't seem to be what the Official Toboggan Corporate Authentication System is expecting.
+
+# The shopkeeper suddenly realizes that he just accidentally explained the password policy rules from his old job at the sled rental place down the street! The Official Toboggan Corporate Policy actually works a little differently.
+
+# Each policy actually describes two positions in the password, where 1 means the first character, 2 means the second character, and so on. (Be careful; Toboggan Corporate Policies have no concept of "index zero"!) Exactly one of these positions must contain the given letter. Other occurrences of the letter are irrelevant for the purposes of policy enforcement.
+
+# Given the same example list from above:
+
+# 1-3 a: abcde is valid: position 1 contains a and position 3 does not.
+# 1-3 b: cdefg is invalid: neither position 1 nor position 3 contains b.
+# 2-9 c: ccccccccc is invalid: both position 2 and position 9 contain c.
+# How many passwords are valid according to the new interpretation of the policies?
+
 defmodule PasswordPhilosophy do
 
-  def analyze(file_path) do
+  def analyze_part1(file_path) do
     File.read!(file_path)
     |> String.split("\n")
-    |> Enum.count(&(valid?(&1)))
+    |> Enum.map(&(extract_captures(&1)))
+    |> Enum.count(&(validate_part1(&1)))
   end
 
-  defp valid?(line) do
-    ~r/(?<min>\d+)-(?<max>\d+) (?<letter>.+): (?<password>.+)/
-    |> Regex.named_captures(line)
-    |> validate
+  def analyze_part2(file_path) do
+    File.read!(file_path)
+    |> String.split("\n")
+    |> Enum.map(&(extract_captures(&1)))
+    |> Enum.count(&(validate_part2(&1)))
   end
 
-  defp validate(nil), do: false
-  defp validate(%{"letter" => letter, "password" => password, "min" => min_count, "max" => max_count}) do
+  defp validate_part1(nil), do: false
+  defp validate_part1(%{"letter" => letter, "password" => password, "min" => min_count, "max" => max_count}) do
     count = String.codepoints(password)
     |> Enum.count(&(&1 == letter))
 
     count >= String.to_integer(min_count) && count <= String.to_integer(max_count)
+  end
+
+  defp validate_part2(nil), do: false
+  defp validate_part2(%{"letter" => letter, "password" => password, "min" => min_position, "max" => max_position}) do
+    index1 = String.to_integer(min_position) - 1
+    index2 = String.to_integer(max_position) - 1
+
+    match_count = [String.at(password, index1), String.at(password, index2)]
+    |> Enum.count(fn a -> a == letter end)
+
+    match_count == 1
+  end
+
+  defp extract_captures(line) do
+    ~r/(?<min>\d+)-(?<max>\d+) (?<letter>.+): (?<password>.+)/
+    |> Regex.named_captures(line)
   end
 
 end
