@@ -33,42 +33,45 @@
 
 defmodule PasswordPhilosophy do
 
-  def analyze_part1(file_path) do
+  @capture_regex ~r/(?<min>\d+)-(?<max>\d+) (?<letter>.+): (?<password>.+)/
+
+  def analyze_character_count(file_path) do
     File.read!(file_path)
     |> String.split("\n")
-    |> Enum.map(&(extract_captures(&1)))
-    |> Enum.count(&(validate_part1(&1)))
+    |> Enum.map(&extract_captures/1)
+    |> Enum.count(&validate_character_count/1)
   end
 
-  def analyze_part2(file_path) do
+  def analyze_character_position(file_path) do
     File.read!(file_path)
     |> String.split("\n")
-    |> Enum.map(&(extract_captures(&1)))
-    |> Enum.count(&(validate_part2(&1)))
+    |> Enum.map(&extract_captures/1)
+    |> Enum.count(&validate_character_position/1)
   end
 
-  defp validate_part1(nil), do: false
-  defp validate_part1(%{"letter" => letter, "password" => password, "min" => min_count, "max" => max_count}) do
-    count = String.codepoints(password)
-    |> Enum.count(&(&1 == letter))
+  defp validate_character_count(nil), do: false
+  defp validate_character_count(%{"letter" => letter, "password" => password, "min" => min_count, "max" => max_count}) do
+    count =
+      String.codepoints(password)
+      |> Enum.count(&(&1 == letter))
 
     count >= String.to_integer(min_count) && count <= String.to_integer(max_count)
   end
 
-  defp validate_part2(nil), do: false
-  defp validate_part2(%{"letter" => letter, "password" => password, "min" => min_position, "max" => max_position}) do
+  defp validate_character_position(nil), do: false
+  defp validate_character_position(%{"letter" => letter, "password" => password, "min" => min_position, "max" => max_position}) do
     index1 = String.to_integer(min_position) - 1
     index2 = String.to_integer(max_position) - 1
 
-    match_count = [String.at(password, index1), String.at(password, index2)]
-    |> Enum.count(fn a -> a == letter end)
+    match_count =
+      [String.at(password, index1), String.at(password, index2)]
+      |> Enum.count(&(&1 == letter))
 
     match_count == 1
   end
 
   defp extract_captures(line) do
-    ~r/(?<min>\d+)-(?<max>\d+) (?<letter>.+): (?<password>.+)/
-    |> Regex.named_captures(line)
+    Regex.named_captures(@capture_regex, line)
   end
 
 end
