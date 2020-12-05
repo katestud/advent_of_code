@@ -1,0 +1,54 @@
+#!/bin/bash
+
+echo "Enter the year: "
+read YEAR
+echo "Enter the day: "
+read DAY
+
+echo "Creating $YEAR/day_$DAY"
+mkdir "$YEAR/day_$DAY" && cd "$YEAR/day_$DAY"
+
+touch test_input.txt
+touch input.txt
+
+echo "Enter the desired puzzle name: "
+read FILENAME
+echo "Enter the desired module name: "
+read MODULENAME
+
+PS3="Select the language: "
+select lang in elixir crystal ruby; do
+
+  case $lang in
+    elixir)
+      touch $FILENAME.exs
+      touch ${FILENAME}_test.exs
+      printf "defmodule $MODULENAME do\nend" >> $FILENAME.exs
+      printf "Code.require_file(\"$FILENAME.exs\", __DIR__)\n\nExUnit.start \
+      \n\ndefmodule ${MODULENAME}Test do \n\tuse ExUnit.Case \nend" >> ${FILENAME}_test.exs
+      break
+      ;;
+    crystal)
+      touch $FILENAME.cr
+      touch ${FILENAME}_test.cr
+      printf "class $MODULENAME\n\t@input : Array(String)\n\tdef initialize(input_file = \"input.txt\")\n\t\t@input = File.read_lines(input_file)\n\tend\nend" >> $FILENAME.cr
+      printf "require \"spec\"\nrequire \"./$FILENAME\" \
+      \n\ndescribe $MODULENAME do\n\tit \"works\" do \
+      \n\t\t$MODULENAME.new(\"test_input.txt\").execute.should eq 0\n\tend\nend" >> ${FILENAME}_test.cr
+      break
+      ;;
+    ruby)
+      touch $FILENAME.rb
+      echo "Not set up yet :)"
+      break
+      ;;
+    quit)
+      break
+      ;;
+    *)
+      echo "Invalid option $REPLY"
+      ;;
+  esac
+done
+
+echo "All set! Navigate to $YEAR/day_$DAY to get started!"
