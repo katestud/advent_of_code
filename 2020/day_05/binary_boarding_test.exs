@@ -11,4 +11,7 @@ defmodule BinaryBoardingTest do
     assert 904 == BinaryBoarding.max_id("input.txt")
   end
 
+  test "finds missing seat id" do
+    assert 669 == BinaryBoarding.missing_id("input.txt")
+  end
 end

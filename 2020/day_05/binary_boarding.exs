@@ -12,6 +12,26 @@ defmodule BinaryBoarding do
     |> Enum.max
   end
 
+  def missing_id(filename) do
+    ids = input(filename)
+    |> Enum.map(&seat_id/1)
+    |> Enum.sort
+    |> Enum.reverse
+
+    [highest | _] = ids
+
+    missing?(highest, ids)
+  end
+
+  defp missing?(num, collection) do
+    cond do
+      Enum.member?(collection, num) ->
+        missing?(num - 1, collection)
+      true ->
+        num
+    end
+  end
+
   defp seat_id(<<row::bytes-size(7)>> <> <<column::bytes-size(3)>>) do
     row(row) * 8 + column(column)
   end
