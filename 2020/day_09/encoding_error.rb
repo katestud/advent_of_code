@@ -40,17 +40,9 @@ class Encoder
   private
 
   def valid?(num, index)
-    valid = false
     preceding = input[index - preamble_length, preamble_length]
 
-    preceding.each do |val|
-      to_find = num - val
-      next if to_find <= 0
-
-      valid = preceding.member?(to_find)
-      break if valid
-    end
-    valid
+    preceding.combination(2).any? { |c| c.sum == num }
   end
 
 end
