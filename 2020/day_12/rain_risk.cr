@@ -10,7 +10,7 @@ class RainRisk
   @input : Array(String)
   @directions : Array(Char) = ['E', 'S', 'W', 'N', 'E', 'S', 'W', 'N']
 
-	def initialize(input_file = "input.txt")
+  def initialize(input_file = "input.txt")
     @input = File.read_lines(input_file)
     @direction = 'E'
     @position = [0, 0]
