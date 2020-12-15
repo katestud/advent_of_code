@@ -1,3 +1,5 @@
+require 'benchmark'
+
 puzzle_input = [9,12,1,4,17,0,18]
 test_input = [0,3,6]
 
@@ -7,31 +9,30 @@ test_input = [0,3,6]
 
 def find_num(input)
   num_positions = Hash.new { |h, k| h[k] = [] }
-  nums = []
 
   input.each_with_index do |val, index|
-    nums << val
     num_positions[val].unshift(index)
   end
 
-  until nums.length >= 30000000
-    last = nums.last
-    current = nums.length
-    positions = num_positions[last]
+  current_index = input.length
+  current_value = input.last
+
+  until current_index >= 30000000
+    positions = num_positions[current_value]
 
     if positions && positions.length > 1
-      val = positions[0] - positions[1]
+      current_value = positions[0] - positions[1]
     else
-      val = 0
+      current_value = 0
     end
-    nums << val
-    num_positions[val].unshift(current)
+    num_positions[current_value].unshift(current_index)
+    current_index += 1
   end
-  nums.last
+  current_value
 end
 
-puts "TEST INPUT"
-puts find_num(test_input)
+# puts "TEST INPUT"
+# puts find_num(test_input)
 
 puts "INPUT"
-puts find_num(puzzle_input)
+puts Benchmark.measure { puts find_num(puzzle_input) }
