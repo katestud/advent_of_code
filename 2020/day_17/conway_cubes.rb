@@ -1,25 +1,44 @@
-def build_empty_layer(size)
-  row = Array.new(size) { "." }
-  Array.new(size) { row.dup  }
+class Row < Array
+  def self.build(size)
+    new(size) { "." }
+  end
+
+  def expand
+    self.prepend(".")
+    self << "."
+    self
+  end
+end
+class Layer < Array
+  def self.build(size)
+    new(size) { Row.build(size).dup  }
+  end
+
+  def expand
+    self.map!(&:expand)
+    row = Row.build(length + 2)
+    self.prepend row.dup
+    self << row.dup
+    self
+  end
 end
 
-def expand_layer(layer)
-  result = layer.map do |row|
-    row.prepend(".")
-    row << "."
+class Cube < Array
+  def self.build(size)
+    new(size - 2) { Layer.build(size).dup }
   end
-  row = Array.new(layer.length + 2) { "." }
-  result.prepend row.dup
-  result << row.dup
-end
 
-def build_cube(cube)
-  size = cube.first.size + 2
-  cube = cube.map do |layer|
-    expand_layer(layer)
+  def expand
+    size = length + 2
+    self.map!(&:expand)
+    self.prepend Layer.build(size)
+    self << Layer.build(size)
+    self
   end
-  cube.prepend build_empty_layer(size)
-  cube << build_empty_layer(size)
+
+  def length
+    self.first.size
+  end
 end
 
 # If a cube is active and exactly 2 or 3 of its neighbors are also active, the cube remains active. Otherwise, the cube becomes inactive.
@@ -63,10 +82,10 @@ def neighbor_indexes(x, y, z, length)
 end
 
 def iterate_over_cube(start_cube)
-  start_cube = build_cube(start_cube)
-  size = start_cube.first.length
+  start_cube.expand
+  size = start_cube.length
 
-  new_cube = Array.new(size - 2) { Array.new(size) { Array.new(size) } }
+  new_cube = Cube.build(size)
 
   start_cube.each_with_index do |layer, layer_index|
     layer.each_with_index do |row, row_index|
@@ -98,20 +117,12 @@ def iterate_over_cube(start_cube)
   new_cube
 end
 
-input = File.readlines("input.txt", chomp: true).to_a.map { |line| line.split("") }
+input = File.readlines("input.txt", chomp: true).to_a.map { |line| Row.new(line.split("")) }
 
-new_cube = [input]
+new_cube = Cube.new([Layer.new(input)])
 
 6.times do
   new_cube = iterate_over_cube(new_cube)
-
-  new_cube.each do |layer|
-    layer.each do |row|
-      puts row.join
-    end
-    puts "       "
-  end
 end
-
 
 puts new_cube.flatten.count("#")
