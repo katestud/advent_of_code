@@ -1,14 +1,6 @@
-# puts File.readlines("input.txt", chomp: true).to_a.inspect
-
-
-input = File.readlines("test_input.txt", chomp: true).to_a.map { |line| line.split("") }
-
-layer1 = input
-
-def build_empty_layer(layer)
-  size = layer.length
+def build_empty_layer(size)
   row = Array.new(size) { "." }
-  Array.new(layer.length) { row.dup  }
+  Array.new(size) { row.dup  }
 end
 
 def expand_layer(layer)
@@ -21,15 +13,14 @@ def expand_layer(layer)
   result << row.dup
 end
 
-layer = expand_layer(layer1)
-
-cube = [
-  build_empty_layer(layer),
-  layer,
-  build_empty_layer(layer)
-]
-
-puts cube.inspect
+def build_cube(cube)
+  size = cube.first.size + 2
+  cube = cube.map do |layer|
+    expand_layer(layer)
+  end
+  cube.prepend build_empty_layer(size)
+  cube << build_empty_layer(size)
+end
 
 # If a cube is active and exactly 2 or 3 of its neighbors are also active, the cube remains active. Otherwise, the cube becomes inactive.
 # If a cube is inactive but exactly 3 of its neighbors are active, the cube becomes active. Otherwise, the cube remains inactive.
@@ -71,45 +62,56 @@ def neighbor_indexes(x, y, z, length)
   end
 end
 
-size = layer.length
+def iterate_over_cube(start_cube)
+  start_cube = build_cube(start_cube)
+  size = start_cube.first.length
 
-new_cube = Array.new(size - 2) { Array.new(size) { Array.new(size) } }
+  new_cube = Array.new(size - 2) { Array.new(size) { Array.new(size) } }
 
-cube.each_with_index do |layer, layer_index|
-  layer.each_with_index do |row, row_index|
-    row.each_with_index do |char, char_index|
+  start_cube.each_with_index do |layer, layer_index|
+    layer.each_with_index do |row, row_index|
+      row.each_with_index do |char, char_index|
 
-      neighbor_indexes = neighbor_indexes(layer_index, row_index, char_index, size)
-      puts "(#{layer_index}, #{row_index}, #{char_index})"
-      # puts neighbor_indexes.inspect
-      neighbors = neighbor_indexes.map do |neighbor|
-        cube.dig(*neighbor)
-      end
-      puts neighbors.inspect if layer_index == 2
-      active_neighbors = neighbors.compact.count("#")
-
-      val = if char == "#"
-        if (2..3).cover?(active_neighbors)
-          "#"
-        else
-          "."
+        neighbor_indexes = neighbor_indexes(layer_index, row_index, char_index, size)
+        neighbors = neighbor_indexes.map do |neighbor|
+          start_cube.dig(*neighbor)
         end
-      else
-        if active_neighbors == 3
-          "#"
-        else
-          "."
-        end
-      end
+        active_neighbors = neighbors.compact.count("#")
 
-      new_cube[layer_index][row_index][char_index] = val
+        val = if char == "#"
+          if (2..3).cover?(active_neighbors)
+            "#"
+          else
+            "."
+          end
+        else
+          if active_neighbors == 3
+            "#"
+          else
+            "."
+          end
+        end
+        new_cube[layer_index][row_index][char_index] = val
+      end
     end
   end
+  new_cube
 end
 
-new_cube.each do |layer|
-  layer.each do |row|
-    puts row.join
+input = File.readlines("input.txt", chomp: true).to_a.map { |line| line.split("") }
+
+new_cube = [input]
+
+6.times do
+  new_cube = iterate_over_cube(new_cube)
+
+  new_cube.each do |layer|
+    layer.each do |row|
+      puts row.join
+    end
+    puts "       "
   end
-  puts "       "
 end
+
+
+puts new_cube.flatten.count("#")
