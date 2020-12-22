@@ -3,22 +3,29 @@ deck_one, deck_two = input.map do |deck|
   deck.split("\n")[1..-1].map(&:to_i)
 end
 
-until deck_one.empty? || deck_two.empty?
-  one = deck_one.shift
-  two = deck_two.shift
-  if one > two
-    deck_one << one
-    deck_one << two
-  else
-    deck_two << two
-    deck_two << one
-  end
+def calculate_score(deck)
+  deck.map.with_index do |card, index|
+    (deck.length - index) * card
+  end.sum
 end
 
-winner = deck_one.empty? ? deck_two : deck_one
+def play_game_one(deck_one, deck_two)
+  until deck_one.empty? || deck_two.empty?
+    one = deck_one.shift
+    two = deck_two.shift
+    if one > two
+      deck_one << one
+      deck_one << two
+    else
+      deck_two << two
+      deck_two << one
+    end
+  end
+  [deck_one, deck_two]
+end
 
-score = winner.map.with_index do |card, index|
-  (winner.length - index) * card
-end.sum
+final = play_game_one(deck_one, deck_two)
 
-puts score
+winner = final.detect { |deck| !deck.empty? }
+
+puts calculate_score(winner)
