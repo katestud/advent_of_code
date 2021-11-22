@@ -1,0 +1,15 @@
+defmodule $MODULE do
+
+  def execute_one(file_path) do
+    read_file(file_path)
+  end
+
+  def execute_two(file_path) do
+    read_file(file_path)
+  end
+
+  defp read_file(file_path) do
+    File.read!(file_path)
+  end
+
+end

@@ -1,0 +1,14 @@
+class $MODULE
+	@input : Array(String)
+	def initialize(input_file = "input.txt")
+		@input = File.read_lines(input_file)
+	end
+
+  def execute_one
+    return 0
+  end
+
+  def execute_two
+    return 0
+  end
+end

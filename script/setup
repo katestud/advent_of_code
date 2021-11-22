@@ -5,8 +5,10 @@ read YEAR
 echo "Enter the day: "
 read DAY
 
+CURRENT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 echo "Creating $YEAR/day_$DAY"
-mkdir "$YEAR/day_$DAY" && cd "$YEAR/day_$DAY"
+mkdir -p "$YEAR/day_$DAY" && cd "$YEAR/day_$DAY"
 
 touch test_input.txt
 touch input.txt
@@ -21,34 +23,30 @@ select lang in elixir crystal ruby; do
 
   case $lang in
     elixir)
-      touch $FILENAME.exs
-      touch ${FILENAME}_test.exs
-      printf "defmodule $MODULENAME do\nend" >> $FILENAME.exs
-      printf "Code.require_file(\"$FILENAME.exs\", __DIR__)\n\nExUnit.start \
-      \n\ndefmodule ${MODULENAME}Test do \n\tuse ExUnit.Case \nend" >> ${FILENAME}_test.exs
-      break
+      EXT=exs
       ;;
     crystal)
-      touch $FILENAME.cr
-      touch ${FILENAME}_test.cr
-      printf "class $MODULENAME\n\t@input : Array(String)\n\tdef initialize(input_file = \"input.txt\")\n\t\t@input = File.read_lines(input_file)\n\tend\nend" >> $FILENAME.cr
-      printf "require \"spec\"\nrequire \"./$FILENAME\" \
-      \n\ndescribe $MODULENAME do\n\tit \"works\" do \
-      \n\t\t$MODULENAME.new(\"test_input.txt\").execute.should eq 0\n\tend\nend" >> ${FILENAME}_test.cr
-      break
+      EXT=cr
       ;;
     ruby)
-      touch $FILENAME.rb
-      echo "Not set up yet :)"
-      break
+      EXT=rb
       ;;
     quit)
       break
       ;;
     *)
       echo "Invalid option $REPLY"
+      break
       ;;
   esac
+
+  TESTMODULE="Test"
+  cp "$CURRENT_DIR/templates/$lang/code.txt" $FILENAME.$EXT
+  cp "$CURRENT_DIR/templates/$lang/test.txt" ${FILENAME}_test.$EXT
+  sed -i '' "s/\$MODULE/$MODULENAME/g" *.$EXT
+  sed -i '' "s/\$FILENAME/$FILENAME/g" *.$EXT
+  echo "All set! Navigate to $YEAR/day_$DAY to get started!"
+  break
 done
 
-echo "All set! Navigate to $YEAR/day_$DAY to get started!"
+

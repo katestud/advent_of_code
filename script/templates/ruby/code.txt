@@ -1,0 +1,21 @@
+class $MODULE
+
+  def initialize(file_name = "input.txt")
+    @file_name = file_name
+  end
+
+  def execute_one
+    read_file.length
+  end
+
+  def execute_two
+    read_file.length
+  end
+
+  private
+
+  def read_file
+    File.readlines(@file_name, chomp: true)
+  end
+
+end

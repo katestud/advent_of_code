@@ -1,0 +1,20 @@
+Code.require_file("$FILENAME.exs", __DIR__)
+
+ExUnit.start(exclude: [:skip])
+
+defmodule $TESTMODULE do
+	use ExUnit.Case
+
+  test "finds solution for part 1" do
+    assert 0 == $MODULE.execute_one("test_input.txt")
+
+    # assert 0 == $MODULE.execute_one("input.txt")
+  end
+
+  @tag :skip
+  test "finds solution for part 2" do
+    assert 0 == $MODULE.execute_two("test_input.txt")
+
+    # assert 0 == $MODULE.execute_two("input.txt")
+  end
+end
