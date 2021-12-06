@@ -1,8 +1,10 @@
+require "../../src/toolkit"
+
 class $MODULE
-	@input : Array(String)
-	def initialize(input_file = "input.txt")
-		@input = File.read_lines(input_file)
-	end
+  @input : Array(String)
+  def initialize(input_file = "input.txt")
+    @input = File.read_lines(input_file)
+  end
 
   def execute_one
     return 0
