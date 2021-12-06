@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
+	"log"
 	"strconv"
 	"strings"
 )
@@ -27,14 +27,17 @@ func main() {
 func executeOne(filename string) int {
 	x := 0
 	y := 0
-	lines := readFile(filename)
+	lines := readLines(filename)
 	for _, l := range lines {
 		if strings.TrimSpace(l) == "" {
 			break
 		}
-		dir_and_dist := strings.Split(l, " ")
-		dist, _ := strconv.Atoi(dir_and_dist[1])
-		switch dir_and_dist[0] {
+		dirDist := strings.Split(l, " ")
+		dist, err := strconv.Atoi(dirDist[1])
+		if err != nil {
+			log.Fatal(err)
+		}
+		switch dirDist[0] {
 		case "forward":
 			x += dist
 		case "down":
@@ -50,14 +53,17 @@ func executeTwo(filename string) int {
 	x := 0
 	y := 0
 	aim := 0
-	lines := readFile(filename)
+	lines := readLines(filename)
 	for _, l := range lines {
 		if strings.TrimSpace(l) == "" {
 			break
 		}
-		dir_and_dist := strings.Split(l, " ")
-		dist, _ := strconv.Atoi(dir_and_dist[1])
-		switch dir_and_dist[0] {
+		dirDist := strings.Split(l, " ")
+		dist, err := strconv.Atoi(dirDist[1])
+		if err != nil {
+			log.Fatal(err)
+		}
+		switch dirDist[0] {
 		case "forward":
 			x += dist
 			y += aim * dist
@@ -70,11 +76,10 @@ func executeTwo(filename string) int {
 	return x * y
 }
 
-func readFile(filename string) []string {
+func readLines(filename string) []string {
 	bs, err := ioutil.ReadFile(filename)
 	if err != nil {
-		fmt.Println("Error:", err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 	s := strings.Split(string(bs), "\n")
 	return s
