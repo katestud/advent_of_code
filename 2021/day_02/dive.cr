@@ -1,15 +1,16 @@
+require "../../src/toolkit"
+
 class Dive
-  @input : Array(String)
+  @input : Array(Array(String))
   def initialize(input_file = "input.txt")
-    @input = File.read_lines(input_file)
+    @input = read_lines_with_separator(input_file, " ")
     @horizontal = 0
     @depth = 0
     @aim = 0
   end
 
   def execute_one
-    @input.each do |line|
-      dir, dist = line.split
+    @input.each do |(dir, dist)|
       case dir
       when "forward"
         @horizontal += dist.to_i
@@ -23,8 +24,7 @@ class Dive
   end
 
   def execute_two
-    @input.each do |line|
-      dir, dist = line.split
+    @input.each do |(dir, dist)|
       case dir
       when "forward"
         @horizontal += dist.to_i

@@ -1,7 +1,9 @@
+require "../../src/toolkit"
+
 class SonarSweep
   @input : Array(Int32)
   def initialize(input_file = "input.txt")
-    @input = File.read_lines(input_file).map { |l| l.to_i }
+    @input = read_lines_of_integers(input_file)
   end
 
   def execute_one

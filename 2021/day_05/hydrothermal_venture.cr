@@ -1,11 +1,12 @@
+require "../../src/toolkit"
+
 class HydrothermalVenture
 
   @input : Array(Array(Int32))
   @grid : Array(Array(Int32))
   def initialize(input_file = "input.txt")
-    @input = File.read_lines(input_file).map { |line| line.split(/\s\-\>\s|\,/).map {|i| i.to_i} }
-    @grid = [Array.new(1000, 0)]
-    999.times { @grid <<  Array.new(1000, 0) }
+    @input = read_lines_with_separator(input_file, /\s\-\>\s|\,/).map {|l| l.map {|i| i.to_i}}
+    @grid = grid(1000, 0)
   end
 
   def execute_one
@@ -31,7 +32,7 @@ class HydrothermalVenture
         stop = false
         until stop
           @grid[starty][startx] += 1
-          stop = starty == endy
+          stop = (starty == endy) && (startx == endx)
           if x1 > x2
             startx -= 1
           else

@@ -1,8 +1,10 @@
+require "../../src/toolkit"
+
 class Lanternfish
   @fish : Array(Int32)
   @fish_counts : Hash(Int32, Int128)
   def initialize(input_file = "input.txt")
-    @fish = File.read_lines(input_file).first.split(",").map {|i| i.to_i}
+    @fish = read_line_of_integers(input_file)
     @fish_counts = Hash(Int32, Int128).new(0)
     (0..8).each do |i|
       @fish_counts[i] = @fish.count(i).to_i128
