@@ -12,7 +12,7 @@ class WhaleTreachery
     results = (min..max).map do |i|
       [i, diff(i, constant_fuel)]
     end
-    results.min_by { |(pos, fuel)| fuel.as(Int32) }.last
+    results.min_by { |(pos, fuel)| fuel.as(Int32 | Float64) }.last
   end
 
   def diff(proposed, constant)
@@ -21,7 +21,7 @@ class WhaleTreachery
     else
       @crab_positions.map do |starting|
         target = (proposed - starting).abs
-        (1..target).to_a.map_with_index(1) { |i, index| index }.sum
+        target*(target+1)/2
       end.sum
     end
   end
