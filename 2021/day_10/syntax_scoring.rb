@@ -22,21 +22,21 @@ class SyntaxScoring
   }
 
   def initialize(file_name = "input.txt")
-    @file_name = file_name
+    @input = File.readlines(file_name, chomp: true)
   end
 
   def execute_one
-    read_file.map do |line|
-      invalid = first_invalid_char(line)
-      SYNTAX_SCORING[invalid] || 0
+    @input.map do |line|
+      invalid_char, _ = expected_remaining_chars(line)
+      SYNTAX_SCORING[invalid_char] || 0
     end.sum
   end
 
   def execute_two
-    scores = read_file.reject do |line|
-      first_invalid_char(line)
-    end.map do |line|
-      remaining_chars(line).reduce(0) do |sum, char|
+    scores = @input.filter_map do |line|
+      invalid_char, remaining_chars = expected_remaining_chars(line)
+      next if invalid_char
+      remaining_chars.reduce(0) do |sum, char|
         sum = sum * 5
         sum += AUTOCOMPLETE_SCORING[char]
       end
@@ -46,11 +46,7 @@ class SyntaxScoring
 
   private
 
-  def read_file
-    File.readlines(@file_name, chomp: true)
-  end
-
-  def first_invalid_char(line)
+  def expected_remaining_chars(line)
     invalid = nil
     next_expected_closing = []
     line.chars.each do |char|
@@ -65,21 +61,7 @@ class SyntaxScoring
         end
       end
     end
-    invalid
-  end
-
-  def remaining_chars(line)
-    next_expected_closing = []
-    line.chars.each do |char|
-      if EXPECTED_CHAR.key?(char)
-        next_expected_closing << EXPECTED_CHAR[char]
-      elsif EXPECTED_CHAR.value?(char)
-        if next_expected_closing.last == char
-          next_expected_closing.pop
-        end
-      end
-    end
-    next_expected_closing.reverse
+    [invalid, next_expected_closing.reverse]
   end
 
 end
