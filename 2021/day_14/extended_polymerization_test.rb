@@ -10,8 +10,8 @@ class ExtendedPolymerizationTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, ExtendedPolymerization.new("test_input.txt").execute_two
+    assert_equal 2188189693529, ExtendedPolymerization.new("test_input.txt").execute_two
 
-    # assert_equal 0, ExtendedPolymerization.new("input.txt").execute_two
+    assert_equal 2827627697643, ExtendedPolymerization.new("input.txt").execute_two
   end
 end
