@@ -25,18 +25,16 @@ class PassagePathing
 
   def skip_path?(source, edge, path)
     return true if edge == "start"
-    if @part == 2
-      return true if path.last(6) === [source, edge, source, edge, source, edge]
-    else
-      return true if path.last(4) === [source, edge, source, edge]
-    end
+    # really for part 1, we could just look at the last 4, but this cleans up the logic a bit and doesn't seem to affect perf in a significant way.
+    return true if path.last(6) === [source, edge, source, edge, source, edge]
 
     grouped = path.group_by(&:itself)
+    return true if grouped.any? { |k, v| /[[:lower:]]/.match(k) && v.size > @part }
+
     if @part == 2
-      return true if grouped.any? { |k, v| /[[:lower:]]/.match(k) && v.size > 2 }
       grouped.count { |k, v| /[[:lower:]]/.match(k) && v.size > 1 } > 1
     else
-      grouped.any? { |k, v| /[[:lower:]]/.match(k) && v.size > 1 }
+      false
     end
   end
 
@@ -51,10 +49,12 @@ class PassagePathing
     new_path = path.dup
     new_path << edge
     return if skip_path?(source, edge, new_path)
+
     if edge == "end"
       @paths << new_path
       return
     end
+
     new_path
   end
 end
