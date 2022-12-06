@@ -12,6 +12,6 @@ class TuningTroubleTest < Minitest::Test
   def test_that_part_two_works
     assert_equal 29, TuningTrouble.new("test_input.txt").execute_two
 
-    assert_equal 0, TuningTrouble.new("input.txt").execute_two
+    assert_equal 3986, TuningTrouble.new("input.txt").execute_two
   end
 end
