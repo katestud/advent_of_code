@@ -13,7 +13,8 @@ class NoSpaceLeft
   end
 
   def execute_two
-    read_file.length
+    directories, files = build_directories
+    find_smallest_deletable_directory(files, directories)
   end
 
   private
@@ -55,5 +56,18 @@ class NoSpaceLeft
     end.select do |size|
       size <= 100000
     end.sum
+  end
+
+  # The total disk space available to the filesystem is 70000000. To run the update, you need unused space of at least 30000000. You need to find a directory you can delete that will free up enough space to run the update.
+
+  def find_smallest_deletable_directory(files, directories)
+    total_size = files.map { |file| file.split(" ")[-1].to_i }.sum
+    space_needed = total_size - 40000000
+    directories.map do |directory|
+      size = files.select { |file| file.start_with?(directory) }.map { |file| file.split(" ")[-1].to_i }.sum
+      size
+    end.select do |size|
+      size > space_needed
+    end.min
   end
 end

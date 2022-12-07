@@ -10,8 +10,8 @@ class NoSpaceLeftTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, NoSpaceLeft.new("test_input.txt").execute_two
+    assert_equal 24933642, NoSpaceLeft.new("test_input.txt").execute_two
 
-    # assert_equal 0, NoSpaceLeft.new("input.txt").execute_two
+    assert_equal 13210366, NoSpaceLeft.new("input.txt").execute_two
   end
 end
