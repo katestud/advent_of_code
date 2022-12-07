@@ -27,11 +27,9 @@ class NoSpaceLeft
     current_dir = ""
     directories = Set.new [""]
     files = Set.new
-    listing = false
     read_file[1..-1].each do |line|
-      next listing = true if line == "$ ls"
+      next if line == "$ ls"
       if line.match?(CHANGE_DIR)
-        listing = false
         new_dir = line.match(CHANGE_DIR)[:dir]
         if new_dir == ".."
           current_dir = current_dir.split("/")[0..-2].join("/")
