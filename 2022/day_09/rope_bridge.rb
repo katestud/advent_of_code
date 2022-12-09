@@ -12,17 +12,8 @@ class RopeBridge
     read_file.each do |instruction|
       dir, times = instruction.split
       times.to_i.times.each do
-        case dir
-        when "R"
-          head_coords = [head_coords[0] + 1, head_coords[1]]
-        when "L"
-          head_coords = [head_coords[0] - 1, head_coords[1]]
-        when "U"
-          head_coords = [head_coords[0], head_coords[1] + 1]
-        when "D"
-          head_coords = [head_coords[0], head_coords[1] - 1]
-        end
-        tail_coords = new_tail_coords(head_coords, tail_coords)
+        head_coords = move_in_direction(head_coords, dir)
+        tail_coords = move_tail(head_coords, tail_coords)
         @visited_coords << tail_coords
       end
     end
@@ -35,22 +26,13 @@ class RopeBridge
     read_file.each do |instruction|
       dir, times = instruction.split
       times.to_i.times.each do
-        case dir
-        when "R"
-          head_coords = [head_coords[0] + 1, head_coords[1]]
-        when "L"
-          head_coords = [head_coords[0] - 1, head_coords[1]]
-        when "U"
-          head_coords = [head_coords[0], head_coords[1] + 1]
-        when "D"
-          head_coords = [head_coords[0], head_coords[1] - 1]
-        end
+        head_coords = move_in_direction(head_coords, dir)
         prev_tail_coords = head_coords.dup
+
         tails_coords = tails_coords.map do |tail_coords|
-          new_coords = new_tail_coords(prev_tail_coords, tail_coords)
-          prev_tail_coords = new_coords
-          new_coords
+          prev_tail_coords = move_tail(prev_tail_coords, tail_coords)
         end
+
         @visited_coords << tails_coords.last
       end
     end
@@ -63,12 +45,25 @@ class RopeBridge
     File.readlines(@file_name, chomp: true)
   end
 
+  def move_in_direction(coords, dir)
+    case dir
+    when "R"
+      [coords[0] + 1, coords[1]]
+    when "L"
+      [coords[0] - 1, coords[1]]
+    when "U"
+      [coords[0], coords[1] + 1]
+    when "D"
+      [coords[0], coords[1] - 1]
+    end
+  end
+
 
   # If the head is ever two steps directly up, down, left, or right from the tail, the tail must also move one step in that direction so it remains close enough:
 
   # Otherwise, if the head and tail aren't touching and aren't in the same row or column, the tail always moves one step diagonally to keep up:
 
-  def new_tail_coords(head_coords, tail_coords)
+  def move_tail(head_coords, tail_coords)
     return tail_coords if touching?(head_coords, tail_coords)
 
     if head_coords[0] == tail_coords[0]
@@ -91,20 +86,11 @@ class RopeBridge
   end
 
   def touching?(head_coords, tail_coords)
-    # touching diagonally
-    # puts "head coords: #{head_coords.inspect}"
-    # puts "tail coords: #{tail_coords.inspect}"
+    # Overlaid on top of each other
     return true if head_coords == tail_coords
 
+    # One or both of the coordinates are the same, or within 1 of each other
     return true if (head_coords[0] - tail_coords[0]).abs <= 1 && (head_coords[1] - tail_coords[1]).abs <= 1
     false
   end
 end
-
-
-# [3, 4] and [2,2] should become [3, 3]
-# [1, 0] and [0,2]  should become [1, 1]
-
-# if x is higher, x should increase by one
-# if y is higher, y should increase by one
-# end
