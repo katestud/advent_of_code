@@ -11,7 +11,7 @@ class RopeBridge
     head_coords = @starting_coords.dup
     tail_coords = @starting_coords.dup
     read_file.each do |instruction|
-      puts instruction
+      # puts instruction
       dir, times = instruction.split
       times.to_i.times.each do
         case dir
@@ -25,11 +25,11 @@ class RopeBridge
           head_coords = [head_coords[0], head_coords[1] - 1]
         end
         tail_coords = new_tail_coords(head_coords, tail_coords)
-        puts "new tail coords: #{tail_coords}"
+        # puts "new tail coords: #{tail_coords}"
         @visited_coords << tail_coords
       end
     end
-    puts @visited_coords
+    # puts @visited_coords
     @visited_coords.count
   end
 
@@ -52,15 +52,15 @@ class RopeBridge
     return tail_coords if touching?(head_coords, tail_coords)
 
     if head_coords[0] == tail_coords[0]
-      if head_coords[1] == tail_coords[1] + 2
+      if head_coords[1] > tail_coords[1]
         [tail_coords[0], tail_coords[1] + 1]
-      elsif head_coords[1] == tail_coords[1] - 2
+      else
         [tail_coords[0], tail_coords[1] - 1]
       end
     elsif head_coords[1] == tail_coords[1]
-      if head_coords[0] == tail_coords[0] + 2
+      if head_coords[0] > tail_coords[0]
         [tail_coords[0] + 1, tail_coords[1]]
-      elsif head_coords[0] == tail_coords[0] - 2
+      else
         [tail_coords[0] - 1, tail_coords[1]]
       end
     else
