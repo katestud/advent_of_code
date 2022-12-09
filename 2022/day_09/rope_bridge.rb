@@ -6,12 +6,10 @@ class RopeBridge
     @visited_coords = Set.new([@starting_coords])
   end
 
-
   def execute_one
     head_coords = @starting_coords.dup
     tail_coords = @starting_coords.dup
     read_file.each do |instruction|
-      # puts instruction
       dir, times = instruction.split
       times.to_i.times.each do
         case dir
@@ -25,16 +23,38 @@ class RopeBridge
           head_coords = [head_coords[0], head_coords[1] - 1]
         end
         tail_coords = new_tail_coords(head_coords, tail_coords)
-        # puts "new tail coords: #{tail_coords}"
         @visited_coords << tail_coords
       end
     end
-    # puts @visited_coords
     @visited_coords.count
   end
 
   def execute_two
-    read_file.length
+    head_coords = @starting_coords.dup
+    tails_coords = 9.times.map { @starting_coords.dup }
+    read_file.each do |instruction|
+      dir, times = instruction.split
+      times.to_i.times.each do
+        case dir
+        when "R"
+          head_coords = [head_coords[0] + 1, head_coords[1]]
+        when "L"
+          head_coords = [head_coords[0] - 1, head_coords[1]]
+        when "U"
+          head_coords = [head_coords[0], head_coords[1] + 1]
+        when "D"
+          head_coords = [head_coords[0], head_coords[1] - 1]
+        end
+        prev_tail_coords = head_coords.dup
+        tails_coords = tails_coords.map do |tail_coords|
+          new_coords = new_tail_coords(prev_tail_coords, tail_coords)
+          prev_tail_coords = new_coords
+          new_coords
+        end
+        @visited_coords << tails_coords.last
+      end
+    end
+    @visited_coords.count
   end
 
   private

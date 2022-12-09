@@ -10,8 +10,10 @@ class RopeBridgeTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    # assert_equal 0, RopeBridge.new("test_input.txt").execute_two
+    assert_equal 1, RopeBridge.new("test_input.txt").execute_two
 
-    # assert_equal 0, RopeBridge.new("input.txt").execute_two
+    assert_equal 36, RopeBridge.new("test_input_two.txt").execute_two
+
+    assert_equal 2658, RopeBridge.new("input.txt").execute_two
   end
 end
