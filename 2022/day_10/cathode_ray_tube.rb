@@ -27,15 +27,14 @@ class CathodeRayTube
   # Start cycle   3: begin executing addx -11
   # During cycle  3: CRT draws pixel in position 2
   # Current CRT row: ##.
-
   def execute_two
     build_registers
     @registers.map.with_index do |register, index|
       position = index % 40
       if (position-1..position+1).cover?(register)
-        "#"
+        "🟩"
       else
-        "."
+        "⬛"
       end
     end.each_slice(40) { |row| puts row.join }
     nil
