@@ -12,6 +12,6 @@ class MonkeyBusinessTest < Minitest::Test
   def test_that_part_two_works
     assert_equal 2713310158, MonkeyBusiness.new("test_input.txt").execute_two
 
-    assert_equal 0, MonkeyBusiness.new("input.txt").execute_two
+    assert_equal 15693274740, MonkeyBusiness.new("input.txt").execute_two
   end
 end
