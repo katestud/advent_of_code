@@ -9,6 +9,35 @@ class HillClimbing
     find_shortest_path(@grid, @start_pos, @goal_pos).length - 1
   end
 
+  def execute_two
+    a_positions = []
+    @grid.each_with_index do |row, index|
+      row.each_with_index do |char, char_index|
+        if char == "a"
+          a_positions << [index, char_index]
+        end
+      end
+    end
+    a_positions.map do |start_a|
+      path = find_shortest_path(@grid, start_a, @goal_pos)
+      path ? path.length - 1 : nil
+    end.compact.min
+  end
+
+  private
+
+  def find_next_available_positions(x, y)
+    char = @grid[x][y]
+    options = []
+    options << [x - 1, y] if x > 0
+    options << [x + 1, y] if x < @grid.length - 1
+    options << [x, y - 1] if y > 0
+    options << [x, y + 1] if y < @grid[0].length - 1
+    position_options = options.select do |pos|
+      @grid.dig(*pos).ord - char.ord  <= 1
+    end
+  end
+
   # Find the shortest path from start to end, given a grid of characters
   def find_shortest_path(grid, start_coords, end_coords)
     # Build a queue of paths
@@ -51,24 +80,6 @@ class HillClimbing
 
     # Return nil if no path is found
     nil
-  end
-
-  def execute_two
-    @grid.length
-  end
-
-  private
-
-  def find_next_available_positions(x, y)
-    char = @grid[x][y]
-    options = []
-    options << [x - 1, y] if x > 0
-    options << [x + 1, y] if x < @grid.length - 1
-    options << [x, y - 1] if y > 0
-    options << [x, y + 1] if y < @grid[0].length - 1
-    position_options = options.select do |pos|
-      @grid.dig(*pos).ord - char.ord  <= 1
-    end
   end
 
   def build_grid

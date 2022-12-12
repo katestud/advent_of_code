@@ -10,8 +10,8 @@ class HillClimbingTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    # assert_equal 0, HillClimbing.new("test_input.txt").execute_two
+    assert_equal 29, HillClimbing.new("test_input.txt").execute_two
 
-    # assert_equal 0, HillClimbing.new("input.txt").execute_two
+    assert_equal 388, HillClimbing.new("input.txt").execute_two
   end
 end
