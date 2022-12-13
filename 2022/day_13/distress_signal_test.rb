@@ -10,8 +10,8 @@ class DistressSignalTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    # assert_equal 0, DistressSignal.new("test_input.txt").execute_two
+    assert_equal 140, DistressSignal.new("test_input.txt").execute_two
 
-    # assert_equal 0, DistressSignal.new("input.txt").execute_two
+    assert_equal 29025, DistressSignal.new("input.txt").execute_two
   end
 end
