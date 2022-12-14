@@ -10,12 +10,12 @@ class RegolithReservoir
   end
 
   def execute_one
-    drop_sand_one
+    drop_sand(1)
     @sand_coords.count
   end
 
   def execute_two
-    drop_sand_two
+    drop_sand(2)
     @sand_coords.count
   end
 
@@ -25,36 +25,27 @@ class RegolithReservoir
     File.readlines(@file_name, chomp: true)
   end
 
-  def drop_sand_one
+  def drop_sand(part)
     current = [500, 0]
-    while current.first >= @left_x && current.first <= @right_x && current.last <= @bottom_y
-      if new_coords = attempt_to_move_down(current)
+    full = false
+    until break_condition(part, current, full)
+      if new_coords = attempt_to_move(current)
         current = new_coords
-      elsif new_coords = attempt_to_move_left_down(current)
-        current = new_coords
-      elsif new_coords = attempt_to_move_right_down(current)
-        current = new_coords
+        full = false
       else
         @sand_coords.add(current)
+        full = current == [500, 0]
         current = [500, 0]
       end
     end
   end
 
-  def drop_sand_two
-    current = [500, 0]
-    while
-      if new_coords = attempt_to_move_down(current)
-        current = new_coords
-      elsif new_coords = attempt_to_move_left_down(current)
-        current = new_coords
-      elsif new_coords = attempt_to_move_right_down(current)
-        current = new_coords
-      else
-        @sand_coords.add(current)
-        break if current == [500, 0]
-        current = [500, 0]
-      end
+  def break_condition(part, coords, full)
+    case part
+    when 1
+      coords.first < @left_x || coords.first > @right_x || coords.last > @bottom_y
+    when 2
+      coords == [500, 0] && full
     end
   end
 
@@ -91,6 +82,18 @@ class RegolithReservoir
     return true if @rock_coords.include?(coords)
     return true if @sand_coords.include?(coords)
     return true if @bottom_y + 2 == coords.last
+  end
+
+  def attempt_to_move(coords)
+    if new_coords = attempt_to_move_down(coords)
+      new_coords
+    elsif new_coords = attempt_to_move_left_down(coords)
+      new_coords
+    elsif new_coords = attempt_to_move_right_down(coords)
+      new_coords
+    else
+      false
+    end
   end
 
   def attempt_to_move_down(coords)
