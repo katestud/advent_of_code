@@ -1,6 +1,9 @@
+require "set"
+
 class RegolithReservoir
 
-  def initialize(file_name = "input.txt")
+  def initialize(file_name = "input.txt", print_grid = false)
+    @print = print_grid
     @file_name = file_name
     @rock_coords = build_rock_coords
     @left_x = @rock_coords.map(&:first).min
@@ -29,6 +32,7 @@ class RegolithReservoir
     current = [500, 0]
     full = false
     until break_condition(part, current, full)
+      print_grid(current) if @print
       if new_coords = attempt_to_move(current)
         current = new_coords
         full = false
@@ -110,4 +114,25 @@ class RegolithReservoir
     new_coords = [coords.first + 1, coords.last + 1]
     position_taken?(new_coords) ? false : new_coords
   end
+
+  def build_grid(current)
+    grid = Array.new( @bottom_y + 1) { Array.new((@right_x - @left_x + 1), "⬛") }
+    @rock_coords.each do |(x,y)|
+      grid[y][x - @left_x] = "⬜"
+    end
+    (@sand_coords + [current]).each do |(x,y)|
+      grid[y][x - @left_x] = "🟨"
+    end
+    grid
+  end
+
+  def print_grid(current)
+    str = build_grid(current).take(30).map do |row|
+      row.join
+    end.join("\n")
+    puts str
+    sleep 0.1
+  end
 end
+
+# RegolithReservoir.new("input.txt", true).execute_one
