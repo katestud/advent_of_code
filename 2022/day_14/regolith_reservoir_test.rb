@@ -10,8 +10,8 @@ class RegolithReservoirTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    # assert_equal 0, RegolithReservoir.new("test_input.txt").execute_two
+    assert_equal 93, RegolithReservoir.new("test_input.txt").execute_two
 
-    # assert_equal 0, RegolithReservoir.new("input.txt").execute_two
+    assert_equal 26484, RegolithReservoir.new("input.txt").execute_two
   end
 end

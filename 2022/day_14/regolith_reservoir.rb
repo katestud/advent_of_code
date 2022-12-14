@@ -10,12 +10,13 @@ class RegolithReservoir
   end
 
   def execute_one
-    drop_sand
+    drop_sand_one
     @sand_coords.count
   end
 
   def execute_two
-    read_file.length
+    drop_sand_two
+    @sand_coords.count
   end
 
   private
@@ -24,7 +25,7 @@ class RegolithReservoir
     File.readlines(@file_name, chomp: true)
   end
 
-  def drop_sand
+  def drop_sand_one
     current = [500, 0]
     while current.first >= @left_x && current.first <= @right_x && current.last <= @bottom_y
       if new_coords = attempt_to_move_down(current)
@@ -35,6 +36,23 @@ class RegolithReservoir
         current = new_coords
       else
         @sand_coords.add(current)
+        current = [500, 0]
+      end
+    end
+  end
+
+  def drop_sand_two
+    current = [500, 0]
+    while
+      if new_coords = attempt_to_move_down(current)
+        current = new_coords
+      elsif new_coords = attempt_to_move_left_down(current)
+        current = new_coords
+      elsif new_coords = attempt_to_move_right_down(current)
+        current = new_coords
+      else
+        @sand_coords.add(current)
+        break if current == [500, 0]
         current = [500, 0]
       end
     end
@@ -70,7 +88,9 @@ class RegolithReservoir
   end
 
   def position_taken?(coords)
-    @rock_coords.include?(coords) || @sand_coords.include?(coords)
+    return true if @rock_coords.include?(coords)
+    return true if @sand_coords.include?(coords)
+    return true if @bottom_y + 2 == coords.last
   end
 
   def attempt_to_move_down(coords)
