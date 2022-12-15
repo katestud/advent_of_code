@@ -10,8 +10,8 @@ class BeaconExclusionZoneTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    # assert_equal 0, BeaconExclusionZone.new("test_input.txt").execute_two
+    assert_equal 56000011, BeaconExclusionZone.new("test_input.txt", 20).execute_two
 
-    # assert_equal 0, BeaconExclusionZone.new("input.txt").execute_two
+    assert_equal 13615843289729, BeaconExclusionZone.new("input.txt", 4000000).execute_two
   end
 end
