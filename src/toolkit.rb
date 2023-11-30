@@ -13,6 +13,10 @@ def read_line_of_integers(filename)
   File.read(filename).split(",").map { |line| line.to_i }
 end
 
+def read_file_into_batches(filename)
+  File.read(filename, chomp: true).split("\n\n").map { |b| b.split("\n") }
+end
+
 # Generates a grid (array of arrays) of a given size, with the given placeholder
 def grid(size, placeholder)
   grid = [Array.new(size, placeholder)]

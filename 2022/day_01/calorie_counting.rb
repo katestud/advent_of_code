@@ -1,8 +1,9 @@
+require_relative "../../src/toolkit"
+
 class CalorieCounter
 
   def initialize(file_name = "input.txt")
-    @file_name = file_name
-    @batches = read_file.split("\n\n").map { |b| b.split("\n") }
+    @batches = read_file_into_batches(file_name)
   end
 
   def execute_one
@@ -16,11 +17,4 @@ class CalorieCounter
       batch.map(&:to_i).sum
     end.sort.reverse.take(3).sum
   end
-
-  private
-
-  def read_file
-    File.read(@file_name, chomp: true)
-  end
-
 end
