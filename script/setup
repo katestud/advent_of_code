@@ -11,7 +11,16 @@ echo "Creating $YEAR/day_$DAY"
 mkdir -p "$YEAR/day_$DAY" && cd "$YEAR/day_$DAY"
 
 touch test_input.txt
-touch input.txt
+
+INPUT_FILE=input.txt
+if [ -f "$INPUT_FILE" ]; then
+    echo "$INPUT_FILE exists."
+else
+    echo "$INPUT_FILE does not exist."
+    curl -H "Cookie: $ADVENT_OF_CODE_SESSION_COOKIE"  "https://adventofcode.com/$YEAR/day/$DAY/input" -o $INPUT_FILE
+fi
+
+
 
 echo "Enter the desired puzzle name: "
 read FILENAME
