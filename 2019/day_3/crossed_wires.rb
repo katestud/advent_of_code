@@ -8,26 +8,28 @@ class CrossedWires
     @input = read_lines_with_separator(file_name)
     @origin = [0,0]
     @first_wire, @second_wire = @input
+    @first_wire_seen = travel(@first_wire)
+    @second_wire_seen = travel(@second_wire)
+    @overlaps = (@first_wire_seen & @second_wire_seen)
   end
 
   def execute_one
-    @first_wire.length
-    first_wire_seen = travel(@first_wire)
-    second_wire_seen = travel(@second_wire)
-    first_wire_seen.intersection(second_wire_seen).map do |pos|
+    @overlaps.map do |pos|
       pos.sum(&:abs)
     end.min
   end
 
   def execute_two
-    @input.length
+    @overlaps.map do |pos|
+      @first_wire_seen.index(pos) + @second_wire_seen.index(pos) + 2
+    end.min
   end
 
   private
 
   def travel(wire_instructions)
     last_pos = @origin.dup
-    Set.new.tap do |seen|
+    [].tap do |seen|
       wire_instructions.each do |instruction|
         dir = instruction[0]
         dist = instruction[1..-1].to_i

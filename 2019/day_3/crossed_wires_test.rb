@@ -10,8 +10,8 @@ class CrossedWiresTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, CrossedWires.new("test_input.txt").execute_two
+    assert_equal 610, CrossedWires.new("test_input.txt").execute_two
 
-    # assert_equal 0, CrossedWires.new("input.txt").execute_two
+    assert_equal 9238, CrossedWires.new("input.txt").execute_two
   end
 end
