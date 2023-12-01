@@ -12,7 +12,7 @@ class TrebuchetTest < Minitest::Test
   def test_that_part_two_works
     assert_equal 281, Trebuchet.new("test_input_part_2.txt").execute_two
 
-    assert_equal 0, Trebuchet.new("input.txt").execute_two
+    assert_equal 53855, Trebuchet.new("input.txt").execute_two
   end
 end
 
