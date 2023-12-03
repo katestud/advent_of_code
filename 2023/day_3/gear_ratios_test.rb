@@ -12,6 +12,6 @@ class GearRatiosTest < Minitest::Test
   def test_that_part_two_works
     assert_equal 467835, GearRatios.new("test_input.txt").execute_two
 
-    assert_equal 0, GearRatios.new("input.txt").execute_two
+    assert_equal 73646890, GearRatios.new("input.txt").execute_two
   end
 end

@@ -23,3 +23,21 @@ def grid(size, placeholder)
   (size-1).times { grid <<  Array.new(size, placeholder) }
   grid
 end
+
+# Given a position [x, y], returns an array of positions next to it, including # diagonals. Does not return positions with negative coordinates (which would
+# be out of bounds). Optionally takes a grid size parameter to omit out of
+# bounds positions
+def adjacent_positions(pos, grid_size = nil)
+  x,y = pos
+  [-1, 0, 1].product([-1, 0, 1]).map do |dx, dy|
+    adj_x = x + dx
+    adj_y = y + dy
+    next if adj_x < 0
+    next if adj_y < 0
+    if grid_size
+      next if adj_x >= grid_size
+      next if adj_y >= grid_size
+    end
+    [adj_x, adj_y]
+  end.compact
+end
