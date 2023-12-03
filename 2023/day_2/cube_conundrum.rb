@@ -18,7 +18,7 @@ class CubeConundrum
 
   # The power of a set of cubes is equal to the numbers of red, green, and blue cubes multiplied together. The power of the minimum set of cubes in game 1 is 48. In games 2-5 it was 12, 1560, 630, and 36, respectively. Adding up these five powers produces the sum 2286.
   def execute_two
-    map = @input.map do |game|
+    @input.map do |game|
       game_power(game)
     end.sum
   end
