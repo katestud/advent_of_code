@@ -10,8 +10,8 @@ class FertilizedSeedsTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, FertilizedSeeds.new("test_input.txt").execute_two
+    assert_equal 46, FertilizedSeeds.new("test_input.txt").execute_two
 
-    # assert_equal 0, FertilizedSeeds.new("input.txt").execute_two
+    assert_equal 37806486, FertilizedSeeds.new("input.txt").execute_two
   end
 end
