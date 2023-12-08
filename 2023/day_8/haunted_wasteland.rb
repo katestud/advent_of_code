@@ -11,19 +11,14 @@ class HauntedWasteland
   INDEX_MAP = { "L" => 0, "R" => 1}
 
   def execute_one
-    pos = "AAA"
-    steps = 0
-    @instructions.each_char.cycle do |direction|
-      steps += 1
-      index = INDEX_MAP[direction]
-      pos = @graph[pos][index]
-      break if pos == "ZZZ"
-    end
-    steps
+    find_steps("AAA", false)
   end
 
   def execute_two
-    0
+    positions = @graph.keys.select {|k| k[-1] == "A"}
+    positions.map do |p|
+      find_steps(p, true)
+    end.reduce(1, :lcm)
   end
 
   private
@@ -34,5 +29,17 @@ class HauntedWasteland
       key, *value = node_line.scan(/\w{3}/)
       @graph[key] = value
     end
+  end
+
+  def find_steps(pos, end_only = false)
+    steps = 0
+    @instructions.each_char.cycle do |direction|
+      steps += 1
+      index = INDEX_MAP[direction]
+      pos = @graph[pos][index]
+      break if pos == "ZZZ"
+      break if pos[-1] == "Z" && end_only
+    end
+    steps
   end
 end
