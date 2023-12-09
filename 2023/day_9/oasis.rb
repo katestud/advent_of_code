@@ -13,24 +13,24 @@ class Oasis
   end
 
   def execute_two
-    @input.length
+    @input.map do |line|
+      process([line], true)
+    end.sum
   end
 
   private
 
-  #[first, second, third]
-  # until third is all zeros
-  # then pop off third
-  # then add one more to second which is third.last plus second.last
-  # then add one more to first which is second.last plus first.last
-
-  def process(list)
+  def process(list, part2 = false)
     diffs = find_diffs(list.last)
     list << diffs
     if diffs.all?(&:zero?)
-      traverse_list(list)
+      if part2
+        traverse_list_part_2(list)
+      else
+        traverse_list(list)
+      end
     else
-      process(list)
+      process(list, part2)
     end
   end
 
@@ -40,6 +40,14 @@ class Oasis
       list.last << list.last.last + last.last
     end
     list.last.last
+  end
+
+  def traverse_list_part_2(list)
+    while list.size > 1
+      last = list.pop
+      list.last.unshift(list.last.first - last.first)
+    end
+    list.last.first
   end
 
   def find_diffs(list)
