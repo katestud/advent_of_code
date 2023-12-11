@@ -2,12 +2,12 @@ require_relative "../../src/toolkit"
 
 class CosmicExpansion
 
-  def initialize(file_name = "input.txt")
+  def initialize(file_name = "input.txt", multiplier = 2)
     @input = File.readlines(file_name, chomp: true)
-    @expanded_galaxies = find_starting_indexes
+    @expanded_galaxies = find_starting_indexes(multiplier)
   end
 
-  def execute_one
+  def execute
     sums = 0
 
     @expanded_galaxies.each_with_index do |pos, index|
@@ -21,13 +21,9 @@ class CosmicExpansion
     sums
   end
 
-  def execute_two
-    @input.length
-  end
-
   private
 
-  def find_starting_indexes
+  def find_starting_indexes(multiplier)
     galaxies = []
     seen_rows = Set.new
     seen_columns = Set.new
@@ -43,8 +39,8 @@ class CosmicExpansion
     empty_columns = 0.upto(@input.size - 1).to_a - seen_columns.to_a
 
     galaxies.map do |(row_index, column_index)|
-      new_row = row_index + empty_rows.count {|r| r < row_index}
-      new_column = column_index + empty_columns.count {|r| r < column_index}
+      new_row = row_index + (empty_rows.count {|r| r < row_index} * (multiplier - 1))
+      new_column = column_index + (empty_columns.count {|r| r < column_index} * (multiplier - 1))
       [new_row, new_column]
     end
   end
