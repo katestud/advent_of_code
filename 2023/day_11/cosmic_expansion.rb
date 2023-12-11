@@ -4,26 +4,18 @@ class CosmicExpansion
 
   def initialize(file_name = "input.txt", multiplier = 2)
     @input = File.readlines(file_name, chomp: true)
-    @expanded_galaxies = find_starting_indexes(multiplier)
+    @expanded_galaxies = expand_galaxies(multiplier)
   end
 
   def execute
-    sums = 0
-
-    @expanded_galaxies.each_with_index do |pos, index|
-      @expanded_galaxies[index+1..-1].each do |next_pos|
-        dist = (0..pos.size-1).reduce(0) do |sum, i|
-          sum + (pos[i] - next_pos[i]).abs
-        end
-        sums += dist
-      end
+    pairs(@expanded_galaxies).each.reduce(0) do |sum, (pos, next_pos)|
+      sum + manhattan_distance(pos, next_pos)
     end
-    sums
   end
 
   private
 
-  def find_starting_indexes(multiplier)
+  def expand_galaxies(multiplier)
     galaxies = []
     seen_rows = Set.new
     seen_columns = Set.new

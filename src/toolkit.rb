@@ -41,3 +41,21 @@ def adjacent_positions(pos, grid_size = nil)
     [adj_x, adj_y]
   end.compact
 end
+
+# Given an array, returns a new array with unique pairs of items
+def pairs(array)
+  array.each_with_object([]).with_index do |(item, arr), index|
+    array[index+1..-1].each do |next_item|
+      arr << [item, next_item]
+    end
+  end
+end
+
+
+# Given two coordinates, calculates the manhattan distance between the two
+def manhattan_distance(a, b)
+  (0..a.size-1).reduce(0) do |sum, index|
+    sum + (a[index] - b[index]).abs
+  end
+end
+
