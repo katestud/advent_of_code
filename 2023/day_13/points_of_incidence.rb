@@ -28,12 +28,12 @@ class IncidencePoints
 
 end
 
-class RowMirror
-  def initialize(pattern, smudge)
+class Mirror
+  def initialize(pattern, check_smudge)
     @pattern = pattern
     @valid = false
-    @check_smudge = smudge
-    @smudged = false
+    @check_smudge = check_smudge
+    @potential_smudge_found = false
     traverse
   end
 
@@ -41,62 +41,59 @@ class RowMirror
     @valid
   end
 
-  def score
-    (@index + 1) * 100
-  end
-
   def traverse
     @pattern.each_with_index do |row, index|
-      if rows_are_equal?(row, @pattern[index+1])
-        if double_check_match(index-1, index+2)
-          next if @check_smudge && !@smudged
-          @valid = true
-          @index = index
-          return true
-        end
+      if rows_are_equal?(row, @pattern[index+1]) && check_all_neighbors(index-1, index+2)
+        next if @check_smudge && !@potential_smudge_found
+        @valid = true
+        @fold = index + 1
+        return true
       end
-      @smudged = false
+      @potential_smudge_found = false
     end
   end
 
   def rows_are_equal?(row1, row2)
     return false if row1.nil? || row2.nil?
-    return row1 == row2 unless @check_smudge
-    return row1 == row2 if @smudged
+
+    complete_match = row1 == row2
+    return true if complete_match
+
+    return complete_match unless @check_smudge && !@potential_smudge_found
+
     match_count = row1.zip(row2).count do |val1, val2|
       val1 == val2
     end
-    if match_count == row1.length
-      return true
-    elsif match_count == row1.length - 1
-      @smudged = true
+    if match_count == row1.length - 1
+      @potential_smudge_found = true
       return true
     end
     false
   end
 
-  def double_check_match(top, bottom)
-    until @pattern[top].nil? || @pattern[bottom].nil?
-      return true if top == -1
-      return true if bottom == @pattern.length
+  def check_all_neighbors(top, bottom)
+    loop do
+      return true if top == -1 || bottom == @pattern.length # Out of bounds
       return false unless rows_are_equal?(@pattern[top], @pattern[bottom])
-      return true if top == 0
       top = top - 1
       bottom = bottom + 1
     end
-    true
   end
 end
 
-class ColumnMirror < RowMirror
-
+class RowMirror < Mirror
   def score
-    @index + 1
+    @fold * 100
+  end
+end
+
+class ColumnMirror < Mirror
+  def score
+    @fold
   end
 
   def traverse
     @pattern = @pattern.transpose
     super()
   end
-
 end
