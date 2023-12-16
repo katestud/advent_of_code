@@ -4,24 +4,46 @@ class FloorIsLava
 
   def initialize(file_name = "input.txt")
     @input = File.readlines(file_name, chomp: true)
-    @visited_with_direction = Set.new
-    @energized_tiles = Set.new
   end
 
   def execute_one(start_dir: :right)
-    start = [[[0,0], start_dir]]
-    @visited_with_direction.add(start)
-    @energized_tiles.add([0,0])
-    current_beams = [[[0,0], start_dir]]
+    traverse([0,0], start_dir)
+  end
+
+  def execute_two
+    directions = Set.new
+    max_index = @input.length - 1
+    0.upto(max_index).each do |i|
+      directions << [[0,i], :down]
+      directions << [[i, 0], :right]
+      directions << [[max_index, i], :up]
+      directions << [[i, max_index], :left]
+    end
+    directions.map do |(pos, dir)|
+      traverse(pos, dir)
+    end.max
+  end
+
+  private
+
+  def traverse(start_position, start_dir)
+    energized_tiles = Set.new
+    visited_with_direction = Set.new
+
+    start = [start_position, start_dir]
+    visited_with_direction.add(start)
+    energized_tiles.add(start_position)
+    current_beams = [[start_position, start_dir]]
+
     until current_beams.empty?
       new_beams = []
 
       current_beams.each do |(pos, direction)|
         new_pos = move(pos, direction)
         next unless valid_pos?(new_pos)
-        @energized_tiles.add(new_pos)
+        energized_tiles.add(new_pos)
         new_directions(new_pos, direction).each do |dir|
-          if @visited_with_direction.add?([new_pos, dir])
+          if visited_with_direction.add?([new_pos, dir])
             new_beams << [new_pos, dir]
           end
         end
@@ -30,11 +52,7 @@ class FloorIsLava
       current_beams = new_beams
     end
 
-    @energized_tiles.count
-  end
-
-  def execute_two
-    @input.length
+    energized_tiles.count
   end
 
   def move(pos, direction)

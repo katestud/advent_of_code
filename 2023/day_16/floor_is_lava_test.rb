@@ -10,8 +10,8 @@ class FloorIsLavaTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, FloorIsLava.new("test_input.txt").execute_two
+    assert_equal 51, FloorIsLava.new("test_input.txt").execute_two
 
-    # assert_equal 0, FloorIsLava.new("input.txt").execute_two
+    assert_equal 7130, FloorIsLava.new("input.txt").execute_two
   end
 end
