@@ -37,8 +37,8 @@ class HotSprings
       end.flatten
     end
 
-    options.select do |start|
-      start.split(".").delete_if { |s| s.empty? }.map(&:length) == counts
+    options.select do |spring|
+      spring.split(".").delete_if { |s| s.empty? }.map(&:length) == counts
     end.count
   end
 end
