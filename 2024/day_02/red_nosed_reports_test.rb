@@ -10,8 +10,8 @@ class RedNosedReportsTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, RedNosedReports.new("test_input.txt").execute_two
+    assert_equal 4, RedNosedReports.new("test_input.txt").execute_two
 
-    # assert_equal 0, RedNosedReports.new("input.txt").execute_two
+    assert_equal 0, RedNosedReports.new("input.txt").execute_two
   end
 end
