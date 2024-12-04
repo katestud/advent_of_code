@@ -13,13 +13,13 @@ class CeresSearch
       row.each_with_index do |column, column_index|
         next unless column == "X"
         pos = [row_index, column_index]
-        possible_directions.each do |direction|
+        [-1, 0, 1].product([-1, 0, 1]).each do |direction|
           next_step = valid_next_step(pos, direction, @grid_size)
-          next unless next_step && @grid[next_step[0]][next_step[1]] == "M"
+          next unless next_step && @grid.dig(*next_step) == "M"
           next_next = valid_next_step(next_step, direction, @grid_size)
-          next unless next_next && @grid[next_next[0]][next_next[1]] == "A"
+          next unless next_next && @grid.dig(*next_next) == "A"
           third_next = valid_next_step(next_next, direction, @grid_size)
-          next unless third_next && @grid[third_next[0]][third_next[1]] == "S"
+          next unless third_next && @grid.dig(*third_next) == "S"
           found += 1
         end
       end
@@ -33,35 +33,27 @@ class CeresSearch
       row.each_with_index do |column, column_index|
         next unless column == "A"
         pos = [row_index, column_index]
-        right_diag = [[-1, -1],[1,1]]
-        left_diag = [[-1, 1], [1, -1]]
-        vals = right_diag.map do |right_pos|
-          next_step = valid_next_step(pos, right_pos, @grid_size)
-          if next_step
-            @grid[next_step[0]][next_step[1]]
+        match = [
+          [[-1, -1],[1,1]],
+          [[-1, 1], [1, -1]]
+        ].all? do |pair|
+          vals = pair.map do |next_pos|
+            next_step = valid_next_step(pos, next_pos, @grid_size)
+            if next_step
+              @grid.dig(*next_step)
+            else
+              ""
+            end
           end
+          vals.sort == ["M", "S"]
         end
-        next if vals.any? {|v| v.nil? }
-        next unless vals.sort == ["M", "S"]
-        vals = left_diag.map do |left_pos|
-          next_step = valid_next_step(pos, left_pos, @grid_size)
-          if next_step
-            @grid[next_step[0]][next_step[1]]
-          end
-        end
-        next if vals.any? {|v| v.nil? }
-        next unless vals.sort == ["M", "S"]
-        found += 1
+        found += 1 if match
       end
     end
     found
   end
 
   private
-
-  def possible_directions
-    [-1, 0, 1].product([-1, 0, 1])
-  end
 
   def valid_next_step(pos, direction, grid_size)
     x,y = pos
