@@ -22,7 +22,28 @@ class PrintQueue
   end
 
   def execute_two
-    @rules.length
+    @incorrect.each do |manual|
+      @rules.each do |k, v|
+        prev_index = manual.find_index(k)
+        next true unless prev_index
+        manual.delete_at(prev_index)
+        index = nil
+        v.each do |page|
+          if i = manual.index(page)
+            if index.nil? || i < index
+              index = i
+            end
+          end
+        end
+        if index
+          manual.insert(index, k)
+        else
+          manual.insert(prev_index, k)
+        end
+      end
+    end.map do |manual|
+      manual[manual.length / 2]
+    end.sum
   end
 
   private

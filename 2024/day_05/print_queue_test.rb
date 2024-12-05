@@ -10,8 +10,8 @@ class PrintQueueTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, PrintQueue.new("test_input.txt").execute_two
+    assert_equal 123, PrintQueue.new("test_input.txt").execute_two
 
-    # assert_equal 0, PrintQueue.new("input.txt").execute_two
+   puts "Part 2: #{PrintQueue.new("input.txt").execute_two}"
   end
 end
