@@ -20,33 +20,31 @@ class BridgeRepair
     left, operator, right = instructions
     case operator
     when "*"
-      left.to_i * right.to_i
+      left * right
     when "+"
-      left.to_i + right.to_i
+      left + right
     when "||"
       "#{left}#{right}".to_i
     end
   end
 
-  def perform(operator_options)
-    sum_found_values = 0
+  def perform(operators)
+    total = 0
     @input.each do |line|
-      first, *values = line.split
-      values.map!(&:to_i)
-      expected = first.to_i
-      operator_options.repeated_permutation(values.length - 1).each do |perm|
+      expected, *values = line.split.map(&:to_i)
+      operators.repeated_permutation(values.length - 1).each do |perm|
         acc, *rest = values
         perm.each_with_index do |operator, index|
           break if acc > expected
           acc = evaluate_instructions [acc, operator, rest[index]]
         end
         if acc == expected
-          sum_found_values += expected
+          total += expected
           break
         end
       end
     end
-    sum_found_values
+    total
   end
 
 end
