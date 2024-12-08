@@ -20,31 +20,27 @@ class ResonantCollinearity
   end
 
   def execute_one
-    antinodes = Set.new
-    @antenna_positions.each do |_, positions|
-      positions.each do |pos|
-        positions.each do |next_pos|
-          find_antinodes(pos, next_pos).each { |n| antinodes.add(n) }
-        end
-      end
-    end
-    antinodes.size
+    execute
   end
 
   def execute_two
+    execute(true)
+  end
+
+  private
+
+  def execute(with_resonance = false)
     antinodes = Set.new
     @antenna_positions.each do |_, positions|
       positions.each do |pos|
-        antinodes.add(pos)
+        antinodes.add(pos) if with_resonance
         positions.each do |next_pos|
-          find_antinodes(pos, next_pos, true).each { |n| antinodes.add(n) }
+          find_antinodes(pos, next_pos, with_resonance).each { |n| antinodes.add(n) }
         end
       end
     end
     antinodes.size
   end
-
-  private
 
   def within_bounds?(pos)
     pos.all? { |i| i >= 0 && i < @grid_size }
@@ -56,24 +52,20 @@ class ResonantCollinearity
     nx, ny = pos2
     x_diff = x - nx
     y_diff = y - ny
+    node_1 = [x + x_diff, y + y_diff]
+    node_2 = [nx - x_diff, ny - y_diff]
     if resonant
       nodes = []
-      dir_1 = [x + x_diff, y + y_diff]
-      while within_bounds?(dir_1)
-        nodes << dir_1
-        x, y = dir_1
-        dir_1 = [x + x_diff, y + y_diff]
+      while within_bounds?(node_1)
+        nodes << node_1
+        node_1 = [node_1[0] + x_diff, node_1[1] + y_diff]
       end
-      dir_2 = [nx - x_diff, ny - y_diff]
-      while within_bounds?(dir_2)
-        nodes << dir_2
-        x, y = dir_2
-        dir_2 = [x - x_diff, y - y_diff]
+      while within_bounds?(node_2)
+        nodes <<  node_2
+        node_2 = [node_2[0] - x_diff, node_2[1] - y_diff]
       end
       nodes
     else
-      node_1 = [x + x_diff, y + y_diff]
-      node_2 = [nx - x_diff, ny - y_diff]
       [node_1, node_2].select { |n| within_bounds?(n) }
     end
   end

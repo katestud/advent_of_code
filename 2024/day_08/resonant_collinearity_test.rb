@@ -12,6 +12,6 @@ class ResonantCollinearityTest < Minitest::Test
   def test_that_part_two_works
     assert_equal 34, ResonantCollinearity.new("test_input.txt").execute_two
 
-    assert_equal 0, ResonantCollinearity.new("input.txt").execute_two
+    assert_equal 905, ResonantCollinearity.new("input.txt").execute_two
   end
 end
