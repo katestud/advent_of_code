@@ -10,8 +10,8 @@ class PlutonianPebblesTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, PlutonianPebbles.new("test_input.txt").execute_two
+    # assert_equal 0, PlutonianPebbles.new("zero.txt").execute_two
 
-    # assert_equal 0, PlutonianPebbles.new("input.txt").execute_two
+    assert_equal 0, PlutonianPebbles.new("input.txt").execute_two
   end
 end

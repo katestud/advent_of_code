@@ -3,40 +3,39 @@ require_relative "../../src/toolkit"
 class PlutonianPebbles
 
   def initialize(file_name = "input.txt")
-    @input = File.read(file_name).chomp.split.map(&:to_i)
+    input = File.read(file_name).chomp.split.map(&:to_i)
+    @value_counts = input.each_with_object(Hash.new(0)) do |num, hash|
+      hash[num] += 1
+    end
   end
-
-  # If the stone is engraved with the number 0, it is replaced by a stone engraved with the number 1.
-  # If the stone is engraved with a number that has an even number of digits, it is replaced by two stones. The left half of the digits are engraved on the new left stone, and the right half of the digits are engraved on the new right stone. (The new numbers don't keep extra leading zeroes: 1000 would become stones 10 and 0.)
-  # If none of the other rules apply, the stone is replaced by a new stone; the old stone's number multiplied by 2024 is engraved on the new stone.
 
   def execute_one
     execute(25)
   end
 
   def execute_two
-    @input.length
+    execute(75)
   end
 
   private
 
   def execute(times)
-    input = @input
-    times.times do
-      new_input = []
-      input.each do |i|
-        if i == 0
-          new_input << 1
-        elsif i.digits.size % 2 == 0
-          half = i.digits.size / 2
-          new_input << i.to_s[0, half].to_i
-          new_input << i.to_s[half, half].to_i
+    input = @value_counts
+    times.times do |t|
+      new_input = Hash.new(0)
+      input.each do |n, count|
+        if n == 0
+          new_input[1] += count
+        elsif n.digits.size % 2 == 0
+          half = n.digits.size / 2
+          new_input[n.to_s[0, half].to_i] += count
+          new_input[n.to_s[half, half].to_i] += count
         else
-          new_input << i * 2024
+          new_input[n * 2024] += count
         end
       end
       input = new_input
     end
-    input.length
+    input.values.sum
   end
 end
