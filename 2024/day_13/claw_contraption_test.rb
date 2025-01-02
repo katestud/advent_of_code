@@ -10,8 +10,8 @@ class ClawContraptionTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, ClawContraption.new("test_input.txt").execute_two
+    # assert_equal 0, ClawContraption.new("test_input.txt").execute_two
 
-    # assert_equal 0, ClawContraption.new("input.txt").execute_two
+    assert_equal 0, ClawContraption.new("input.txt").execute_two
   end
 end

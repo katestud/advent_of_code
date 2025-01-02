@@ -1,15 +1,5 @@
 require_relative "../../src/toolkit"
 
-
-# The cheapest way to win the prize is by pushing the A button 80 times and the B button 40 times. This would line up the claw along the X axis (because 80*94 + 40*22 = 8400) and along the Y axis (because 80*34 + 40*67 = 5400). Doing this would cost 80*3 tokens for the A presses and 40*1 for the B presses, a total of 280 tokens.
-
-# For the second and fourth claw machines, there is no combination of A and B presses that will ever win a prize.
-
-# For the third claw machine, the cheapest way to win the prize is by pushing the A button 38 times and the B button 86 times. Doing this would cost a total of 200 tokens.
-
-# So, the most prizes you could possibly win is two; the minimum tokens you would have to spend to win all (two) prizes is 480.
-
-
 class ClawContraption
 
   def initialize(file_name = "input.txt")
@@ -27,7 +17,33 @@ class ClawContraption
   end
 
   def execute_two
-    @contraptions.length
+    @contraptions.map do |c|
+      a, b, pr = c
+      a = Button.new(a)
+      b = Button.new(b)
+      pr = Prize.new(pr, 10000000000000)
+
+      # Using linear algebra to find the solution
+      determinant = (a.x * b.y) - (a.y * b.x)
+      return nil if determinant == 0
+
+      # Find the solution using Cramer's rule
+      numerator_x = (pr.x * b.y - pr.y * b.x)
+      numerator_y = (a.x * pr.y - a.y * pr.x)
+
+      # Instead of checking division, let's try to find the smallest positive solution
+      # that satisfies our equations: ax + by = pr
+      x = numerator_x.abs / determinant.abs
+      y = numerator_y.abs / determinant.abs
+
+      # Verify the solution
+      if (a.x * x + b.x * y == pr.x) && (a.y * x + b.y * y == pr.y)
+        result = (x * 3 + y)
+        result
+      else
+        nil
+      end
+    end.compact.sum
   end
 
   private
@@ -50,12 +66,12 @@ class ClawContraption
 end
 
 class Prize
-  attr_reader :x, :y
+  attr_accessor :x, :y
 
-  def initialize(row)
+  def initialize(row, increment = 0)
     match = row.match(/.+=(\d+).+=(\d+)/)
-    @x = match[1].to_i
-    @y = match[2].to_i
+    @x = match[1].to_i + increment
+    @y = match[2].to_i + increment
   end
 end
 
