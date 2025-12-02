@@ -12,6 +12,6 @@ class GiftShopTest < Minitest::Test
   def test_that_part_two_works
     assert_equal 4174379265, GiftShop.new("test_input.txt").execute_two
 
-    # assert_equal 0, GiftShop.new("input.txt").execute_two
+    assert_equal 47477053982, GiftShop.new("input.txt").execute_two
   end
 end

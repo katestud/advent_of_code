@@ -58,8 +58,10 @@ class GiftShop
   def is_invalid_two?(id)
     str_id = id.to_s
     length = str_id.length
-    return false unless  length % 2 == 0
-    return false unless str_id[0, length / 2] == str_id[length / 2, length]
-    true
+    1.upto(length-1).each do |i|
+      parts = str_id.scan(/.{1,#{i}}/)
+      return true if parts.uniq.size == 1
+    end
+    false
   end
 end
