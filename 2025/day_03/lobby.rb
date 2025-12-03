@@ -8,14 +8,25 @@ class Lobby
 
   def execute_one
     @input.sum do |row|
-      first_digit = row[0..-2].max
-      start_index = row.index(first_digit)
-      second_digit = row[start_index+1..-1].max
-      [first_digit, second_digit].join.to_i
+      find_joltage(row, 2)
     end
   end
 
   def execute_two
-    @input.length
+    @input.sum do |row|
+      find_joltage(row, 12)
+    end
+  end
+
+  def find_joltage(row, length)
+    digits = []
+    start_index = 0
+    (-length).upto(-1).each do |i|
+      slice = row[start_index..i]
+      next_digit = slice.max
+      digits << next_digit
+      start_index = slice.index(next_digit) + start_index + 1
+    end
+    digits.join.to_i
   end
 end
