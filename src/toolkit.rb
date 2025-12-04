@@ -27,13 +27,16 @@ end
 # Given a position [x, y], returns an array of positions next to it, including # diagonals. Does not return positions with negative coordinates (which would
 # be out of bounds). Optionally takes a grid size parameter to omit out of
 # bounds positions
-def adjacent_positions(pos, grid_size = nil)
+def adjacent_positions(pos, grid_size = nil, omit_self: false)
   x,y = pos
   [-1, 0, 1].product([-1, 0, 1]).map do |dx, dy|
     adj_x = x + dx
     adj_y = y + dy
     next if adj_x < 0
     next if adj_y < 0
+    if omit_self
+      next if x == adj_x && y == adj_y
+    end
     if grid_size
       next if adj_x >= grid_size
       next if adj_y >= grid_size
