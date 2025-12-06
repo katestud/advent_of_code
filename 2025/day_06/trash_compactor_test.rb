@@ -10,8 +10,8 @@ class TrashCompactorTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, TrashCompactor.new("test_input.txt").execute_two
+    assert_equal 3263827, TrashCompactor.new("test_input.txt").execute_two
 
-    # assert_equal 0, TrashCompactor.new("input.txt").execute_two
+    assert_equal 9194682052782, TrashCompactor.new("input.txt").execute_two
   end
 end
