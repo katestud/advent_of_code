@@ -10,8 +10,8 @@ class CafeteriaTest < Minitest::Test
   end
 
   def test_that_part_two_works
-    assert_equal 0, Cafeteria.new("test_input.txt").execute_two
+    assert_equal 14, Cafeteria.new("test_input.txt").execute_two
 
-    # assert_equal 0, Cafeteria.new("input.txt").execute_two
+    assert_equal 333892124923577, Cafeteria.new("input.txt").execute_two
   end
 end
