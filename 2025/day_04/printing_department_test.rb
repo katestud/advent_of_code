@@ -12,6 +12,6 @@ class PrintingDepartmentTest < Minitest::Test
   def test_that_part_two_works
     assert_equal 43, PrintingDepartment.new("test_input.txt").execute_two
 
-    assert_equal 0, PrintingDepartment.new("input.txt").execute_two
+    assert_equal 9290, PrintingDepartment.new("input.txt").execute_two
   end
 end
