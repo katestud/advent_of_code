@@ -5,6 +5,9 @@ read YEAR
 echo "Enter the day: "
 read DAY
 
+# Strip leading zeros for URL (day 06 -> day 6)
+DAY_NUM=$((10#$DAY))
+
 CURRENT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 echo "Creating $YEAR/day_$DAY"
@@ -12,12 +15,78 @@ mkdir -p "$YEAR/day_$DAY" && cd "$YEAR/day_$DAY"
 
 touch test_input.txt
 
+show_cookie_help() {
+    echo ""
+    echo "⚠️  Failed to download puzzle input!"
+    echo ""
+    echo "To download your puzzle input automatically, you need a valid session cookie."
+    echo ""
+    echo "Steps to get your session cookie:"
+    echo "  1. Log in to https://adventofcode.com"
+    echo "  2. Open your browser's Developer Tools (F12 or Cmd+Option+I)"
+    echo "  3. Go to the Application/Storage tab"
+    echo "  4. Find 'Cookies' → 'https://adventofcode.com'"
+    echo "  5. Copy the value of the 'session' cookie"
+    echo ""
+    echo "Would you like to set it now? (y/n)"
+    read -r response
+    if [[ "$response" =~ ^[Yy]$ ]]; then
+        echo "Paste your session cookie value (just the value, not 'session='):"
+        read -r cookie_value
+        # Remove 'session=' prefix if user included it
+        cookie_value="${cookie_value#session=}"
+        export ADVENT_OF_CODE_SESSION_COOKIE="session=$cookie_value"
+        echo ""
+        echo "Cookie set for this session!"
+        echo "To make it permanent, add this to your ~/.zshrc:"
+        echo "  export ADVENT_OF_CODE_SESSION_COOKIE='session=$cookie_value'"
+        echo ""
+        return 0
+    else
+        echo ""
+        echo "You can manually download the input from:"
+        echo "  https://adventofcode.com/$YEAR/day/$DAY_NUM/input"
+        echo ""
+        return 1
+    fi
+}
+
 INPUT_FILE=input.txt
 if [ -f "$INPUT_FILE" ]; then
     echo "$INPUT_FILE exists."
 else
     echo "$INPUT_FILE does not exist."
-    curl -H "Cookie: $ADVENT_OF_CODE_SESSION_COOKIE"  "https://adventofcode.com/$YEAR/day/$DAY/input" -o $INPUT_FILE
+
+    download_success=false
+
+    while [ "$download_success" = false ]; do
+        if [ -z "$ADVENT_OF_CODE_SESSION_COOKIE" ]; then
+            show_cookie_help || break
+        fi
+
+        # Try to download with cookie
+        echo "Downloading input..."
+        response=$(curl -w "\n%{http_code}" -H "Cookie: $ADVENT_OF_CODE_SESSION_COOKIE" \
+            "https://adventofcode.com/$YEAR/day/$DAY_NUM/input" -s)
+
+        # Split response into body and status code
+        http_code=$(echo "$response" | tail -n1)
+        body=$(echo "$response" | sed '$d')
+
+        if [ "$http_code" = "200" ]; then
+            echo "$body" > $INPUT_FILE
+            echo "✓ Input downloaded successfully!"
+            download_success=true
+        elif [ "$http_code" = "404" ]; then
+            echo "⚠️  Got 404 - This puzzle may not be available yet or the day number is incorrect."
+            echo "You can check: https://adventofcode.com/$YEAR/day/$DAY_NUM"
+            break
+        else
+            echo "⚠️  Got HTTP $http_code - Cookie may be invalid or expired."
+            unset ADVENT_OF_CODE_SESSION_COOKIE
+            show_cookie_help || break
+        fi
+    done
 fi
 
 
